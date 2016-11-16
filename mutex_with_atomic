@@ -1,0 +1,23 @@
+сlass Semaphore {
+public:
+    explicit Semaphore(std::atomic<Type> max_count) : max_count_(max_count) {}
+
+    void acquire() {
+        std::unique_lock<std::mutex> lock(mut_);
+        while (count_ == max_count_) cv_.wait(lock);
+        ++count_;
+    }
+
+    void release() {
+        std::lock_guard<std::mutex> lock(mut_);
+        assert(count_ > 0);
+        --count_;
+        cv_.notify_one();
+    }
+
+private:
+    int max_count_;
+    int count_ = 0;
+    std::mutex mut_;
+    std::condition_variable cv_;
+};
