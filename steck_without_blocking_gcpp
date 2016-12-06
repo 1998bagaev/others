@@ -1,0 +1,25 @@
+class Stack {
+    deferred_ptr<Node> head;
+public:
+    Stack() : head(0) {}
+    void push(Node *n) {
+        do {
+            n->next = head;
+        } while(!head.testAndSetOrdered(n->next, n));
+    }
+    Node *pop() {
+        Node *n;
+        do {
+            n = head;
+            if (!n)
+                return 0;
+        } while(!head.testAndSetOrdered(n, n->next));
+        return n;
+    }
+    
+    
+    ~deferred_Stack()
+    {
+       
+    }
+};
