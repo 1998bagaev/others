@@ -1,25 +1,45 @@
-class Stack {
-    deferred_ptr<Node> head;
+template<typename T>
+class Stack{
+private:
+struct Node
+{
+deferred_ptr<T> t;
+deferred_ptr<Node> next;
+Node(deferred_ptr& t) : next{t} {}
+};
+
+deferred_ptr<Node> head;
+
+   
 public:
     Stack() : head(0) {}
-    void push(Node *n) {
-        do {
-            n->next = head;
-        } while(!head.testAndSetOrdered(n->next, n));
-    }
-    Node *pop() {
-        Node *n;
-        do {
-            n = head;
-            if (!n)
-                return 0;
-        } while(!head.testAndSetOrdered(n, n->next));
-        return n;
-    }
     
     
-    ~deferred_Stack()
+   void Push(T* a)
+   {
+         Node* n = new Node;
+         n->t = e;
+        do{
+            n->next = m_head;
+        }while(!CompareAndSwap(head, n->next, n));
+    }
+    
+         
+    Node *pop()
     {
-       
+    Node* old_head;
+         T* res;
+        do{
+           old_head = head;
+             if(old_head == NULL)
+             {
+                 return NULL;
+             }
+         }while(!CompareAndSwap(head, old_head, old_head->next));
+ 
+         res = old_head->t;
+         delete old_head;
+         return res;
     }
+    
 };
